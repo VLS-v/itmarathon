@@ -26,10 +26,37 @@ namespace Epam.ItMarathon.ApiService.Application.UseCases.User.Handlers
             }
 
             var room = roomResult.Value;
+
+            var authUser = room.Users.FirstOrDefault(user => user.AuthCode == request.UserCode);
+            if (authUser == null)
+            {
+                return Result.Failure<RoomAggregate, ValidationResult>(new InternalServerError([
+                    new ValidationFailure("userCode",
+                        "Critical data integrity error: User found by code but missing from room users")
+                ]));
+            }
+
+            if (!authUser.IsAdmin)
+            {
+                return Result.Failure<RoomAggregate, ValidationResult>(new NotAuthorizedError([
+                    new ValidationFailure("userCode", "You must be an administrator to perform this action")
+                ]));
+            }
+
+            var userToDelete = room.Users.FirstOrDefault(user => user.Id == request.UserId);
+            if (userToDelete == null)
+            {
+                return Result.Failure<RoomAggregate, ValidationResult>(new BadRequestError([
+                    new ValidationFailure("userId", "User to delete not found in the room")
+                ]));
+            }
+
             var deleteResult = room.DeleteUser(request.UserId);
             if (deleteResult.IsFailure)
             {
-                return deleteResult;
+                return Result.Failure<RoomAggregate, ValidationResult>(new BadRequestError([
+                    new ValidationFailure(string.Empty, deleteResult.Error.ToString())
+                ]));
             }
 
             var updateResult = await roomRepository.UpdateAsync(room, cancellationToken);

@@ -313,6 +313,14 @@ namespace Epam.ItMarathon.ApiService.Domain.Aggregate.Room
                     ]));
             }
 
+            var adminsCount = Users.Count(user => user.IsAdmin);
+            if (userToDelete.IsAdmin && adminsCount == 1)
+            {
+                return Result.Failure<Room, ValidationResult>(new BadRequestError([
+                    new ValidationFailure("user.IsAdmin", "Cannot delete the admin user from the room.")
+                ]));
+            }
+
             Users.Remove(userToDelete);
             return this;
         }

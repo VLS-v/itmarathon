@@ -63,7 +63,37 @@ namespace Epam.ItMarathon.ApiService.Api.Endpoints
                 .WithSummary("Create and add user to a room.")
                 .WithDescription("Return created user info.");
 
+            _ = root.MapDelete("{id:long}", DeleteUserWithId)
+                .AddEndpointFilterFactory(ValidationFactoryFilter.GetValidationFactory)
+                .Produces(StatusCodes.Status200OK)
+                .ProducesProblem(StatusCodes.Status400BadRequest)
+                .ProducesProblem(StatusCodes.Status401Unauthorized)
+                .ProducesProblem(StatusCodes.Status404NotFound)
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
+                .WithSummary("Delete user by Id.")
+                .WithDescription("Return OK if successful.");
+
             return application;
+        }
+
+        /// <summary>
+        /// Method that handles deletion of a user from the room.
+        /// </summary>
+        /// <param name="id">Unique identifier of the user to be deleted.</param>
+        /// <param name="userCode">User's authorization code.</param>
+        /// <param name="mediator">Implementation of <see cref="IMediator"/> for handling business logic.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/> that can be used to cancel operation.</param>
+        /// <returns>Returns OK (200) on successful deletion.</returns>
+        private static async Task<IResult> DeleteUserWithId([FromRoute] ulong id, [FromQuery, Required] string? userCode,
+            IMediator mediator, CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new DeleteUserRequest(userCode!, id), cancellationToken);
+            if (result.IsFailure)
+            {
+                return result.Error.ValidationProblem();
+            }
+            
+            return Results.Ok();
         }
 
         /// <summary>

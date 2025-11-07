@@ -15,6 +15,8 @@ const Modal = ({
   onClose,
   onConfirm,
   children,
+  withConfirm = false,
+  isLoading = false,
 }: ModalProps) => {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -38,15 +40,35 @@ const Modal = ({
         </div>
 
         <div className="modal__close-button">
-          <IconButton iconName="cross" onClick={onClose} />
+          <IconButton
+            iconName="cross"
+            onClick={isLoading ? () => {} : onClose}
+            disabled={isLoading}
+          />
         </div>
 
         {children}
 
-        <div className="modal__back-button">
-          <Button size="medium" width={225} onClick={onConfirm}>
+        <div className="modal__action-buttons">
+          <Button
+            variant={withConfirm ? "secondary" : "primary"}
+            size="medium"
+            width={225}
+            onClick={isLoading ? undefined : onClose}
+            disabled={isLoading}
+          >
             Go Back to Room
           </Button>
+          {withConfirm && (
+            <Button
+              size="medium"
+              width={225}
+              onClick={isLoading ? undefined : onConfirm}
+              disabled={isLoading}
+            >
+              Confirm
+            </Button>
+          )}
         </div>
       </div>
     </div>

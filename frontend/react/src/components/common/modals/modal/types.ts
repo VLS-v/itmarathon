@@ -5,6 +5,7 @@ export const ICON_NAMES = {
   COOKIE: "cookie",
   NOTE: "note",
   CAR: "car",
+  TRASH: "trash",
 } as const;
 
 type IconName = (typeof ICON_NAMES)[keyof typeof ICON_NAMES];
@@ -18,4 +19,6 @@ export interface ModalProps {
   onClose: () => void;
   onConfirm: () => void;
   children: ReactNode;
+  withConfirm?: boolean;
+  isLoading?: boolean;
 }

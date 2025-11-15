@@ -18,6 +18,7 @@ internal static class ValidationExtensions
             NotAuthorizedError => StatusCodes.Status401Unauthorized,
             ForbiddenError => StatusCodes.Status403Forbidden,
             NotFoundError => StatusCodes.Status404NotFound,
+            InternalServerError => StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status400BadRequest,
         };
     }

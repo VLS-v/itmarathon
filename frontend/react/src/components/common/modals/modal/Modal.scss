@@ -17,6 +17,7 @@
     padding-left: 86px;
     text-align: left;
     background: left center / 74px 74px no-repeat;
+    min-height: 74px;
 
     &--presents {
       background-image: url("../../../../assets/images/backgrounds/modal-background-sprite.svg#presents");
@@ -32,6 +33,10 @@
 
     &--car {
       background-image: url("../../../../assets/images/backgrounds/modal-background-sprite.svg#car");
+    }
+
+    &--trash {
+      background-image: url("../../../../assets/images/backgrounds/modal-background-sprite.svg#trash");
     }
   }
 
@@ -57,8 +62,10 @@
     right: 44px;
   }
 
-  &__back-button {
+  &__action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
     margin-top: 48px;
-    text-align: right;
   }
 }
